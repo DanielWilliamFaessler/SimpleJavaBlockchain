@@ -1,7 +1,9 @@
 package ch.bbw.blockchain;
 
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 public class StringHashUtil {
 	
@@ -28,5 +30,8 @@ public class StringHashUtil {
 			
 		} catch (NoSuchAlgorithmException e) {}
 		return "";
+	}
+	public static String getStringFromKey(Key key){
+		return(Base64.getEncoder().encodeToString(key.getEncoded()));
 	}
 }

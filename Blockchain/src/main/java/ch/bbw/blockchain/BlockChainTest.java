@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import com.google.gson.GsonBuilder;
 
 public class BlockChainTest {
-	public static int difficulty = 6;
+	public static int difficulty = 7;
 	public static ArrayList<Block> blockchain = new ArrayList<>();
 
 	public static void main(String[] args) {
