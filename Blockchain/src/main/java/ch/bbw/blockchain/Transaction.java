@@ -31,4 +31,14 @@ public class Transaction {
         );
     }
 
+    public void generateSignature(PrivateKey privateKey) {
+        String data = StringHashUtil.getStringFromKey(sender) + StringHashUtil.getStringFromKey(reciepient) + Float.toString(value)	;
+        signature = StringHashUtil.applyECDSASig(privateKey,data);
+    }
+    //Verifies the data we signed hasnt been tampered with
+    public boolean verifiySignature() {
+        String data = StringHashUtil.getStringFromKey(sender) + StringHashUtil.getStringFromKey(reciepient) + Float.toString(value)	;
+        return StringHashUtil.verifyECDSASig(sender, data, signature);
+    }
+
 }
