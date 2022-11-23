@@ -2,13 +2,17 @@ package ch.bbw.blockchain;
 
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.google.gson.GsonBuilder;
 
 public class BlockChainTest {
 	public static int difficulty = 7;
 	public static ArrayList<Block> blockchain = new ArrayList<>();
+	public static HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>(); //list of all unspent transactions.
 	public static Wallet walletA;
 	public static Wallet walletB;
+	public static float minimumTransaction;
 
 	public static void main(String[] args) {
 

@@ -1,6 +1,5 @@
 package ch.bbw.blockchain;
 import java.security.*;
-import ch.bbw.blockchain.StringHashUtil;
 import java.util.ArrayList;
 public class Transaction {
     public String transactionId; // this is also the hash of the transaction.
@@ -29,6 +28,64 @@ public class Transaction {
                 + Float.toString(value)
                         + sequence
         );
+    }
+
+    //Returns true if new transaction could be created.
+    public boolean processTransaction() {
+
+        if(verifiySignature() == false) {
+            System.out.println("#Transaction Signature failed to verify");
+            return false;
+        }
+
+        //gather transaction inputs (Make sure they are unspent):
+        for(TransactionInput i : inputs) {
+            i.UTXO = BlockChainTest.UTXOs.get(i.transactionOutputId);
+        }
+
+        //check if transaction is valid:
+        if(getInputsValue() < BlockChainTest.minimumTransaction) {
+            System.out.println("#Transaction Inputs to small: " + getInputsValue());
+            return false;
+        }
+
+        //generate transaction outputs:
+        float leftOver = getInputsValue() - value; //get value of inputs then the left over change:
+        transactionId = calulateHash();
+        outputs.add(new TransactionOutput( this.reciepient, value,transactionId)); //send value to recipient
+        outputs.add(new TransactionOutput( this.sender, leftOver,transactionId)); //send the left over 'change' back to sender
+
+        //add outputs to Unspent list
+        for(TransactionOutput o : outputs) {
+            BlockChainTest.UTXOs.put(o.id , o);
+        }
+
+        //remove transaction inputs from UTXO lists as spent:
+        for(TransactionInput i : inputs) {
+            if(i.UTXO == null) continue; //if Transaction can't be found skip it
+            BlockChainTest.UTXOs.remove(i.UTXO.id);
+        }
+
+        return true;
+    }
+
+    //returns sum of inputs(UTXOs) values
+    public float getInputsValue() {
+        float total = 0;
+        for(TransactionInput i : inputs) {
+            if(i.UTXO == null) continue; //if Transaction can't be found skip it
+            total += i.UTXO.value;
+        }
+        return total;
+    }
+
+    //returns sum of outputs:
+    public float getOutputsValue() {
+        float total = 0;
+        for(TransactionOutput o : outputs) {
+            total += o.value;
+        }
+        return total;
     }
 
     public void generateSignature(PrivateKey privateKey) {
